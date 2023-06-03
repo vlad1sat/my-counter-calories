@@ -3,7 +3,6 @@
         <legend class="visually-hidden">
             Физические параметры
         </legend>
-        {{dataPerson}}
         <div class="inputs-group">
             <div class="input">
                 <div class="input__heading">
@@ -14,7 +13,8 @@
                 </div>
                 <div class="input__wrapper">
                     <input type="text"
-                           id="age"
+                           value="0"
+                           ref="age"
                            name="age"
                            placeholder="0"
                            inputmode="decimal"
@@ -30,7 +30,7 @@
                     <span class="input__heading-unit">см</span>
                 </div>
                 <div class="input__wrapper">
-                    <input type="text" id="height" name="height" placeholder="0" inputmode="decimal" maxlength="3"
+                    <input type="text" value="0" ref="height" name="height" placeholder="0" inputmode="decimal" maxlength="3"
                             @input="changeDataPerson" required>
                 </div>
             </div>
@@ -42,7 +42,7 @@
                     <span class="input__heading-unit">кг</span>
                 </div>
                 <div class="input__wrapper">
-                    <input type="text" id="weight" name="weight" placeholder="0" maxlength="3" @input="changeDataPerson" required>
+                    <input type="text" ref="weight" value="0" name="weight" placeholder="0" maxlength="3" @input="changeDataPerson" required>
                 </div>
             </div>
         </div>
@@ -61,8 +61,7 @@ export default defineComponent({
             required: true
         },
         isClean: {
-            type: Boolean,
-            required: true
+            type: Boolean
         }
     },
 
@@ -76,6 +75,7 @@ export default defineComponent({
     methods: {
         changeDataPerson(e: any): void {
             let target: number = +e.target.value;
+            console.log(this.person)
             if (!Number.isNaN(target)) {
                 this.dataPerson[e.target.name] = target;
                 e.target.value = this.changeFormatParams(String(target));
@@ -106,7 +106,25 @@ export default defineComponent({
 
             return +result.join('');
         }
+    },
+
+    watch: {
+        isClean(newValue) {
+            if (newValue) {
+                console.log(newValue)
+                this.dataPerson = {
+                    age: 0,
+                    height: 0,
+                    weight: 0
+                };
+                this.$refs['age'].value = '0';
+                this.$refs['height'].value = '0';
+                this.$refs['weight'].value = '0';
+                this.$emit('clean-data')
+            }
+        }
     }
+
 });
 </script>
 

@@ -7,7 +7,7 @@
                 </h1>
                 <form class="counter__form form" name="counter" action="#" method="post" @submit.prevent="sentResult = true">
                     <gender-menu :gender="gender" @changeGender="(data) => gender = data"/>
-                    <sport-parameters :person="dataPerson" :isClean="isClean" @changeDataPerson="changeValueDataPerson"/>
+                    <sport-parameters :person="dataPerson" :isClean="isClean" @cleanData="isClean = false" @changeDataPerson="changeValueDataPerson"/>
                     <sport-activity :action-person="actionPerson" @sentAction="(data) => actionPerson = data" />
                     <div class="form__submit">
                         <button class="form__submit-button button" name="submit" type="submit" :disabled="!stateButtons.sent">
@@ -62,6 +62,7 @@ export default defineComponent({
     methods: {
         changeValueDataPerson(data: IDataPerson): void {
             this.dataPerson = Object.assign(data);
+            console.log('p', this.dataPerson)
             let isSent = true;
 
             Object.values(this.dataPerson).forEach((el: number) => {
@@ -79,6 +80,7 @@ export default defineComponent({
         },
 
         cleanState(): void {
+            this.isClean = true;
             this.gender = 'male';
             document.getElementById('gender-male').checked = true;
 
