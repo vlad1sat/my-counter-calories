@@ -65,29 +65,39 @@ export default defineComponent({
         }
     },
 
-    data() {
+    data(): { dataPerson: IDataPerson, stateClean: boolean } {
         return {
             dataPerson: this.person,
             stateClean: this.isClean
         }
     },
 
+    computed: {
+        inputs(): HTMLInputElement[] {
+            return [
+                this.$refs['age'] as HTMLInputElement,
+                this.$refs['height'] as HTMLInputElement,
+                this.$refs['weight'] as HTMLInputElement
+            ];
+        }
+    },
+
     methods: {
-        changeDataPerson(e: any): void {
-            let target: number = +e.target.value;
-            console.log(this.person)
+        changeDataPerson(e: PointerEvent): void {
+            let target: number = +(<HTMLInputElement>e.target).value;
+
             if (!Number.isNaN(target)) {
-                this.dataPerson[e.target.name] = target;
-                e.target.value = this.changeFormatParams(String(target));
+                this.dataPerson[(<HTMLInputElement>e.target).name as keyof IDataPerson] = target;
+                (<HTMLInputElement>e.target).value = this.changeFormatParams(String(target));
 
                 this.$emit('change-data-person', this.dataPerson);
             } else {
-                this.dataPerson[e.target.name] = 0;
-                e.target.value = 0;
+                this.dataPerson[(<HTMLInputElement>e.target).name as keyof IDataPerson] = 0;
+                (<HTMLInputElement>e.target).value = '0';
             }
         },
 
-        changeFormatParams(param: string): number {
+        changeFormatParams(param: string): string {
             let isFirst = false;
             let result: string[] = [];
 
@@ -101,33 +111,29 @@ export default defineComponent({
             });
 
             if (!result.length) {
-                return 0;
+                return '0';
             }
 
-            return +result.join('');
+            return result.join('');
         }
     },
 
     watch: {
-        isClean(newValue) {
+        isClean(newValue: boolean): void {
             if (newValue) {
-                console.log(newValue)
                 this.dataPerson = {
                     age: 0,
                     height: 0,
                     weight: 0
                 };
-                this.$refs['age'].value = '0';
-                this.$refs['height'].value = '0';
-                this.$refs['weight'].value = '0';
-                this.$emit('clean-data')
+
+                this.inputs.forEach((el: HTMLInputElement): void => {
+                    el.value = '0';
+                });
+
+                this.$emit('clean-data');
             }
         }
     }
-
 });
 </script>
-
-<style scoped>
-
-</style>

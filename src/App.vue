@@ -5,7 +5,8 @@
                 <h1 class="counter__heading heading-main">
                     Счётчик калорий
                 </h1>
-                <form class="counter__form form" name="counter" action="#" method="post" @submit.prevent="sentResult = true">
+                <form class="counter__form form" name="counter" action="#" method="post"
+                      @submit.prevent="sentResult = true">
                     <gender-menu :gender="gender" @changeGender="(data) => gender = data"/>
                     <sport-parameters :person="dataPerson" :isClean="isClean" @cleanData="isClean = false" @changeDataPerson="changeValueDataPerson"/>
                     <sport-activity :action-person="actionPerson" @sentAction="(data) => actionPerson = data" />
@@ -38,18 +39,21 @@ import SportActivity from "@/components/SportActivity.vue";
 import CaloriesResult from "@/components/CaloriesResult.vue";
 import GenderMenu from "@/components/GenderMenu.vue";
 import IDataPerson from "@/interfaces/IDataPerson";
+import {BaseStateApp, EMPTY_PERSON, TBaseState} from "@/interfaces/baseDataApp";
+
+const BaseIdItems: TBaseState = {
+    gender: 'gender-male',
+    action: 'activity-minimal'
+};
+
 export default defineComponent({
     components: {GenderMenu, CaloriesResult, SportActivity, SportParameters},
 
     data() {
         return {
-            gender: 'male',
-            dataPerson: {
-                age: 0,
-                height: 0,
-                weight: 0,
-            },
-            actionPerson: 'min',
+            gender: BaseStateApp.gender,
+            dataPerson: EMPTY_PERSON,
+            actionPerson: BaseStateApp.action,
             stateButtons: {
                 clean: false,
                 sent: false
@@ -62,12 +66,12 @@ export default defineComponent({
     methods: {
         changeValueDataPerson(data: IDataPerson): void {
             this.dataPerson = Object.assign(data);
-            console.log('p', this.dataPerson)
             let isSent = true;
 
-            Object.values(this.dataPerson).forEach((el: number) => {
+            Object.values(this.dataPerson).forEach((el: number): void => {
                 if (el <= 0) {
                     this.stateButtons.sent = false;
+                    this.sentResult = false;
                     isSent = false;
                 } else {
                     this.stateButtons.clean = true;
@@ -81,35 +85,23 @@ export default defineComponent({
 
         cleanState(): void {
             this.isClean = true;
-            this.gender = 'male';
-            document.getElementById('gender-male').checked = true;
+            this.gender = BaseStateApp.gender;
+            (<HTMLInputElement>document.getElementById(BaseIdItems.gender)).checked = true;
 
-            this.dataPerson = {
-                age: 0,
-                height: 0,
-                weight: 0,
-            };
 
-            this.actionPerson = 'min';
-            document.getElementById('activity-minimal').checked = true;
+            this.dataPerson = EMPTY_PERSON;
+
+            this.actionPerson = BaseStateApp.action;
+            (<HTMLInputElement>document.getElementById(BaseIdItems.action)).checked = true;
 
             this.stateButtons = {
                 clean: false,
                 sent: false
             };
+
             this.sentResult = false;
         }
-    },
-
-    watch: {
-        gender(newValue) {
-           console.log(this.gender);
-           console.log(this.dataPerson)
-            console.log(this.actionPerson)
-        },
     }
 });
 </script>
-<style>
 
-</style>

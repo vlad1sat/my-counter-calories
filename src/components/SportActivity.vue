@@ -54,8 +54,10 @@
     </fieldset>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+
+export default defineComponent({
     name: "SportActivity",
 
     props: {
@@ -66,13 +68,9 @@ export default {
     },
 
     methods: {
-        sentAction(e) {
-            this.$emit('sent-action', e.target.value);
+        sentAction(e: PointerEvent): void {
+            this.$emit('sent-action', (<HTMLInputElement>e.target).value);
         }
     }
-}
+});
 </script>
-
-<style scoped>
-
-</style>

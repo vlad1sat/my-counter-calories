@@ -22,6 +22,7 @@
 
 <script lang="ts">
 import {defineComponent} from "vue";
+
 export default defineComponent({
     name: "GenderMenu",
 
@@ -33,8 +34,8 @@ export default defineComponent({
     },
 
     methods: {
-        changeGender(e: any) {
-            this.$emit('change-gender', e.target.value)
+        changeGender(e: PointerEvent): void {
+            this.$emit('change-gender', (<HTMLInputElement>e.target).value);
         }
     }
 });

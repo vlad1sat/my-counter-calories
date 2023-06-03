@@ -30,6 +30,8 @@
 import IDataPerson from "@/interfaces/IDataPerson";
 import {PropType} from "vue";
 import {defineComponent} from "vue";
+import {BaseStateApp} from "@/interfaces/baseDataApp";
+
 export default defineComponent({
     name: "CaloriesResult",
 
@@ -54,7 +56,7 @@ export default defineComponent({
         calories(): number {
             const person: IDataPerson = Object.assign(this.propsPerson);
             const baseCalories: number = (10 * person.weight) + (6.25 * person.height) - (5 * person.age);
-            let calories = this.gender === 'male' ? baseCalories + 5 : baseCalories - 161;
+            let calories: number = this.gender === BaseStateApp.gender ? baseCalories + 5 : baseCalories - 161;
 
             switch (this.actionPerson) {
                 case 'min':
@@ -73,6 +75,7 @@ export default defineComponent({
                     calories *= 1.9;
                     break;
             }
+
             return calories;
         },
 
@@ -88,7 +91,7 @@ export default defineComponent({
     methods: {
         fixCalories(dataCalories: number): number {
             return +dataCalories.toFixed(2);
-        },
+        }
     }
 });
 </script>
