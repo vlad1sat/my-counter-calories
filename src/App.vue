@@ -6,118 +6,9 @@
                     Счётчик калорий
                 </h1>
                 <form class="counter__form form" name="counter" action="#" method="post" @submit.prevent="sentResult = true">
-                    <div class="form__item">
-                        <h2 class="heading">
-                            Пол
-                        </h2>
-                        <ul class="switcher" >
-                            <li class="switcher__item" value="male">
-                                <input id="gender-male" name="gender" ref="base-gender-input" @click="(e) => gender = e.target.value" value="male" type="radio" checked required >
-                                <label for="gender-male">
-                                    Мужчина
-                                </label>
-                            </li>
-                            <li class="switcher__item" value="female">
-                                <input id="gender-female" name="gender" @click="(e) => gender = e.target.value" value="female" type="radio" required>
-                                <label for="gender-female">
-                                    Женщина
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-                    <fieldset class="form__item form__parameters" name="parameters">
-                        <legend class="visually-hidden">
-                            Физические параметры
-                        </legend>
-                        <div class="inputs-group">
-                            <div class="input">
-                                <div class="input__heading">
-                                    <label class="heading" for="age">
-                                        Возраст
-                                    </label>
-                                    <span class="input__heading-unit">лет</span>
-                                </div>
-                                <div class="input__wrapper">
-                                    <input type="number" id="age" name="age" placeholder="0" inputmode="decimal" max="999" v-model="dataPerson.age" @input="changeValueDataPerson" required>
-                                </div>
-                            </div>
-                            <div class="input">
-                                <div class="input__heading">
-                                    <label class="heading" for="height">
-                                        Рост
-                                    </label>
-                                    <span class="input__heading-unit">см</span>
-                                </div>
-                                <div class="input__wrapper">
-                                    <input type="number" id="height" name="height" placeholder="0" inputmode="decimal" max="999" v-model="dataPerson.height" @input="changeValueDataPerson" required>
-                                </div>
-                            </div>
-                            <div class="input">
-                                <div class="input__heading">
-                                    <label class="heading" for="weight">
-                                        Вес
-                                    </label>
-                                    <span class="input__heading-unit">кг</span>
-                                </div>
-                                <div class="input__wrapper">
-                                    <input type="number" id="weight" name="weight" placeholder="0" max="999" v-model="dataPerson.weight" @input="changeValueDataPerson" required>
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <fieldset class="form__item">
-                        <legend class="heading">Физическая активность</legend>
-                        <ul class="radios-group">
-                            <li class="radio">
-                                <div class="radio__wrapper">
-                                    <input id="activity-minimal" name="activity" value="min" type="radio" ref="base-activity-minimal"
-                                           @click="(e) => actionPerson = e.target.value" checked required>
-                                    <label for="activity-minimal">Минимальная</label>
-                                </div>
-                                <p class="radio__description">Сидячая работа и нет физических нагрузок</p>
-                            </li>
-                            <li class="radio">
-                                <div class="radio__wrapper">
-                                    <input id="activity-low" name="activity" value="low" type="radio" @click="(e) => actionPerson = e.target.value" required>
-                                    <label for="activity-low">Низкая</label>
-                                </div>
-                                <p class="radio__description">Редкие, нерегулярные тренировки, активность в быту</p>
-                            </li>
-                            <li class="radio">
-                                <div class="radio__wrapper">
-                                    <input id="activity-medium" name="activity" value="medium" type="radio" @click="(e) => actionPerson = e.target.value" required>
-                                    <label for="activity-medium">
-                                        Средняя
-                                    </label>
-                                </div>
-                                <p class="radio__description">
-                                    Тренировки 3-5 раз в неделю
-                                </p>
-                            </li>
-                            <li class="radio">
-                                <div class="radio__wrapper">
-                                    <input id="activity-high" name="activity" value="high" @click="(e) => actionPerson = e.target.value" type="radio" required>
-                                    <label for="activity-high">
-                                        Высокая
-                                    </label>
-                                </div>
-                                <p class="radio__description">
-                                    Тренировки 6-7 раз в неделю
-                                </p>
-                            </li>
-                            <li class="radio">
-                                <div class="radio__wrapper">
-                                    <input id="activity-maximal" name="activity" value="max" type="radio" @click="(e) => actionPerson = e.target.value" required>
-                                    <label for="activity-maximal">
-                                        Очень высокая
-                                    </label>
-                                </div>
-                                <p class="radio__description">
-                                    Больше 6 тренировок в неделю и физическая работа
-                                </p>
-                            </li>
-                        </ul>
-                    </fieldset>
+                    <gender-menu :gender="gender" @changeGender="(data) => gender = data"/>
+                    <sport-parameters :person="dataPerson" :isClean="isClean" @changeDataPerson="changeValueDataPerson"/>
+                    <sport-activity :action-person="actionPerson" @sentAction="(data) => actionPerson = data" />
                     <div class="form__submit">
                         <button class="form__submit-button button" name="submit" type="submit" :disabled="!stateButtons.sent">
                             Рассчитать
@@ -130,31 +21,11 @@
                         </button>
                     </div>
                 </form>
-                <section class="counter__result" :class="{ 'counter__result--hidden': !sentResult }">
-                    <h2 class="heading">
-                        Ваша норма калорий
-                    </h2>
-                    <ul class="counter__result-list">
-                        <li class="counter__result-item">
-                            <h3>
-                                <span id="calories-norm">{{fixCalories(calories)}}</span> ккал
-                            </h3>
-                            <p>поддержание веса</p>
-                        </li>
-                        <li class="counter__result-item">
-                            <h3>
-                                <span id="calories-minimal">{{fixCalories(downCalories)}}</span> ккал
-                            </h3>
-                            <p>снижение веса</p>
-                        </li>
-                        <li class="counter__result-item">
-                            <h3>
-                                <span id="calories-maximal">{{fixCalories(upCalories)}}</span> ккал
-                            </h3>
-                            <p>набор веса</p>
-                        </li>
-                    </ul>
-                </section>
+                <calories-result v-show="sentResult"
+                     :action-person="actionPerson"
+                     :gender="gender"
+                     :props-person="dataPerson"
+                />
             </article>
         </div>
     </main>
@@ -162,7 +33,13 @@
 
 <script lang="ts">
 import {defineComponent} from "vue";
+import SportParameters from "@/components/SportParameters.vue";
+import SportActivity from "@/components/SportActivity.vue";
+import CaloriesResult from "@/components/CaloriesResult.vue";
+import GenderMenu from "@/components/GenderMenu.vue";
+import IDataPerson from "@/interfaces/IDataPerson";
 export default defineComponent({
+    components: {GenderMenu, CaloriesResult, SportActivity, SportParameters},
 
     data() {
         return {
@@ -178,58 +55,13 @@ export default defineComponent({
                 sent: false
             },
             sentResult: false,
+            isClean: false,
         };
     },
 
-    computed: {
-        calories(): number {
-            const person = this.dataPerson;
-            const baseCalories: number = (10 * person.weight) + (6.25 * person.height) - (5 * person.age);
-            let calories = this.gender === 'male' ? baseCalories + 5 : baseCalories - 161;
-            switch (this.actionPerson) {
-                case 'min':
-                    calories *= 1.2;
-                    break;
-                case 'low':
-                    calories *= 1.375;
-                    break;
-                case 'medium':
-                    calories *= 1.55;
-                    break;
-                case 'high':
-                    calories *= 1.725;
-                    break;
-                case 'max':
-                    calories *= 1.9;
-                    break;
-            }
-            return calories;
-        },
-
-        upCalories(): number {
-            return this.calories * 1.15;
-        },
-
-        downCalories(): number {
-            return this.calories * 0.85;
-        },
-
-        baseGenderInput(): HTMLInputElement {
-            return this.$refs['base-gender-input'] as HTMLInputElement;
-        },
-
-        baseActivityMinimal(): HTMLInputElement {
-            return this.$refs['base-activity-minimal'] as HTMLInputElement;
-        }
-    },
-
     methods: {
-        fixCalories(dataCalories: number): number {
-            return +dataCalories.toFixed(2);
-        },
-
-        changeValueDataPerson(e: Event): void {
-            this.dataPerson[e.target.name] = +e.target.value;
+        changeValueDataPerson(data: IDataPerson): void {
+            this.dataPerson = Object.assign(data);
             let isSent = true;
 
             Object.values(this.dataPerson).forEach((el: number) => {
@@ -243,22 +75,21 @@ export default defineComponent({
 
             if (isSent) {
                 this.stateButtons.sent = true;
-                console.log(this.dataPerson)
             }
         },
 
-        cleanState() {
+        cleanState(): void {
             this.gender = 'male';
-            this.baseGenderInput.checked = true;
+            document.getElementById('gender-male').checked = true;
 
             this.dataPerson = {
-            age: 0,
+                age: 0,
                 height: 0,
                 weight: 0,
             };
 
             this.actionPerson = 'min';
-            this.baseActivityMinimal.checked = true;
+            document.getElementById('activity-minimal').checked = true;
 
             this.stateButtons = {
                 clean: false,
@@ -272,6 +103,7 @@ export default defineComponent({
         gender(newValue) {
            console.log(this.gender);
            console.log(this.dataPerson)
+            console.log(this.actionPerson)
         },
     }
 });
